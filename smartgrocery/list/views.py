@@ -13,6 +13,15 @@ class ListsAPIView(APIView):
     serializer_class = ListSerializer
     permission_classes = [permissions.AllowAny]     # Allow anyone to view this model (no auth required)
 
+    def get(self, request):
+        ''' Returns all lists '''
+        try:
+            lists = self.queryset.all()
+            serialize = self.serializer_class(lists, many=True)
+            return Response(serialize.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     def post(self, request):
         ''' Creates a new list'''
         try:
