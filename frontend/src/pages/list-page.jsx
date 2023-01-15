@@ -74,7 +74,7 @@ export default function ListPage() {
                 <Card mt={3} key={index} className='item-card'>
                   <CardHeader display='flex' justifyContent='space-between' p={3} className='list-card-header'>
                     <LinkOverlay onClick={() => modifyItem(item)}>
-                      <Heading maxW={200} overflowX='hidden' textOverflow='ellipsis' whiteSpace='nowrap' size='lg'>{item.itemName}</Heading>
+                      <Heading maxW='50vw' lineHeight={10} overflowX='hidden' textOverflow='ellipsis' whiteSpace='nowrap' size='lg'>{item.itemName}</Heading>
                     </LinkOverlay>
                     <IconButton icon={<DeleteIcon />} onClick={() => deleteItem(item.itemName)} />
                   </CardHeader>
