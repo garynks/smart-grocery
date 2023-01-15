@@ -21,7 +21,7 @@ export default function ListPage() {
       .catch(err => {
         console.error(err);
       })
-  }, [])
+  }, [isOpen])
 
   return (
     <>
