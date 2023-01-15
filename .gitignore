@@ -50,5 +50,6 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-backend/db.sqlite3
+smartgrocery/db.sqlite3
 node_modules
+smartgrocery/db.sqlite3

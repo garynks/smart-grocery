@@ -1,12 +1,13 @@
 import { React, useState, useEffect } from 'react';
 import { Box, Heading, IconButton, LinkBox, LinkOverlay, useDisclosure } from '@chakra-ui/react';
 import { Card, CardHeader } from '@chakra-ui/react'
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import NewListModal from '../components/NewListModal';
 
 export default function MainPage() {
   const [lists, setLists] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();      // for modal, to determin closing/opening logic
+  const [refresh, setRefresh] = useState(false);           // for refreshing the lists (recalls useEffect when state changes)
 
   useEffect(() => {
     // fetches the lists from the backend
@@ -19,7 +20,20 @@ export default function MainPage() {
       .catch(err => {
         console.log(err.error);
       })
-  }, [isOpen])
+  }, [isOpen, refresh])
+
+  const deleteList = (listName) => {
+    console.log("yes")
+    fetch(`/lists/${listName}`, {
+      method: 'DELETE'
+    })
+    .then(res => {
+      setRefresh(!refresh);
+    })
+    .catch(err => {
+      console.error(err);
+    })
+  }
 
   return (
     <>
@@ -32,13 +46,14 @@ export default function MainPage() {
           {lists.map((list, index) => {
             return (
               <LinkBox>
-                <LinkOverlay href={`/lists/${list.listName}`} >
                   <Card key={index} className='list-card' w='300px' h='300px' bgGradient="linear(to-tr, purple.500, purple.400)" boxShadow='lg'>
-                    <CardHeader p={3} className='list-card-header'>
-                      <Heading size='md'>{list.listName}</Heading>
+                    <CardHeader display='flex' justifyContent='space-between' className='list-card-header'>
+                      <LinkOverlay href={`/lists/${list.listName}`} >
+                        <Heading maxW={200} overflowX='hidden' textOverflow='ellipsis' whiteSpace='nowrap' size='md'>{list.listName}</Heading>
+                      </LinkOverlay>
+                      <IconButton icon={<DeleteIcon />} onClick={() => deleteList(list.listName)} />
                     </CardHeader>
                   </Card>
-                </LinkOverlay>
               </LinkBox>
             )
           }
