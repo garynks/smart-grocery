@@ -61,7 +61,7 @@ export default function ListPage() {
   return (
     <>
       <Box display='flex' gap={3} className="list-page-container">
-        <Heading>{listName}</Heading>
+        <Heading maxW='50vw' lineHeight='2rem' overflow='hidden' textOverflow='ellipsis' whiteSpace='nowrap'>{listName}</Heading>
         <IconButton onClick={onOpen} icon={<AddIcon />} isRound={true} className='add-list-btn'>+</IconButton>
         <Button onClick={clearList} isRound={true} className='add-list-btn'>Clear List</Button>
         <NewItemModal item={itemToModify} listName={listName} isOpen={isOpen} onClose={onClose} />
