@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from .serializers import ListSerializer
 from item.serializers import ItemSerializer
 from .models import List
@@ -72,4 +73,42 @@ class ListAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class ItemAPIView(APIView):
+    ''' HTTP Methods for `/lists/<list_name>/<item_name>/` '''
+    queryset = List.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = [permissions.AllowAny]     
 
+    def put(self, request, list_name, item_name):
+        ''' Updates a grocery item in the given list '''
+        try:
+            list = self.queryset.get(listName=list_name)
+            item = Item.objects.filter(list=list, itemName=item_name)
+            if item.exists():
+                request.data['list'] = list.pk
+                item.update(**request.data)
+                return Response(request.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': "Item does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, list_name, item_name):
+        ''' Deletes a grocery item from the given list '''
+        try:
+            list = self.queryset.get(listName=list_name)
+            item = Item.objects.get(list=list, itemName=item_name)
+            item.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def clear_list(request, list_name):
+    ''' Clears a list with the given name, `/lists/<list_name>/clear/` '''
+    try:
+        list = List.objects.get(listName=list_name)
+        Item.objects.filter(list=list).delete()
+        return Response({'details': 'List cleared'}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
